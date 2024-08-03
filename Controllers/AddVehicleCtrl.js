@@ -103,4 +103,40 @@ const handleAddVehicle = async (req, res) => {
   }
 };
 
-module.exports = { handleAddVehicle };
+const handleGetAllVehicle = async (req, res) => {
+  try {
+    const clientId = req.client.id;
+    const vehicles = await VehicleModel.find({ client_id: clientId });
+
+    if (!vehicles.length === 0) {
+      return res.status(200).json({ message: "No vehicles found" });
+    }
+
+    return res.status(200).json({ vehicles });
+  } catch (error) {
+    return res.status(500).json({ error_message: error.message });
+  }
+};
+
+const handleGetOneVehicle = async (req, res) => {
+  try {
+    const clientId = req.client.id;
+
+    const vehicleId = req.params.id;
+
+    const vehicle = await VehicleModel.findOne({
+      client_id: clientId,
+      _id: vehicleId,
+    });
+
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+
+    return res.status(200).json({ vehicle });
+  } catch (error) {
+    return res.status(500).json({ error_message: error.message });
+  }
+};
+
+module.exports = { handleAddVehicle, handleGetAllVehicle, handleGetOneVehicle };

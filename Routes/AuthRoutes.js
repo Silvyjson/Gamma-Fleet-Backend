@@ -22,7 +22,6 @@ const {
   handleGetAllDriver,
   handleGetOneDriver,
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterDriverCtrl");
-const { handleAddVehicle } = require("../Controllers/AddVehicleCtrl");
 
 const AuthRouter = express.Router();
 
@@ -55,7 +54,5 @@ AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
 AuthRouter.post("/forgot-Password", handleForgotPassword);
 
 AuthRouter.post("/reset-Password", handleResetPassword);
-
-AuthRouter.post("/add-vehicle", AuthenticateClient, handleAddVehicle);
 
 module.exports = AuthRouter;
