@@ -18,15 +18,14 @@ const VehicleSchema = new mongoose.Schema({
   },
   ownersName: { type: String, required: true },
   ownersLicense: { type: String, required: true },
-  address: {
-    addressLine1: { type: String, required: true },
-    addressLine2: { type: String },
+  OwnersAddress: {
+    addressLine: { type: String, required: true },
     state: { type: String, required: true },
     country: { type: String, required: true },
   },
   insurance: { type: Boolean, required: true },
   insuranceDueDate: { type: Date },
-  driver_id: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
+  AssignedDriver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   maintenanceRecords: { type: [String] },
   trips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],

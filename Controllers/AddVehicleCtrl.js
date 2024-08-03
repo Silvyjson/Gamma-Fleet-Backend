@@ -15,13 +15,12 @@ const handleAddVehicle = async (req, res) => {
       permitType,
       ownersName,
       ownersLicense,
-      addressLine1,
-      addressLine2,
+      addressLine,
       state,
       country,
+      AssignedDriver,
       insurance,
       insuranceDueDate,
-      driverEmail,
     } = req.body;
 
     const clientId = req.client.id;
@@ -35,28 +34,21 @@ const handleAddVehicle = async (req, res) => {
       !permitType ||
       !ownersName ||
       !ownersLicense ||
-      !addressLine1 ||
+      !addressLine ||
       !state ||
       !country ||
-      insurance === undefined ||
-      !driverEmail
+      !AssignedDriver ||
+      insurance === undefined
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingVehicle = await VehicleModel.findOne({ VehicleName });
-    if (existingVehicle) {
-      return res
-        .status(400)
-        .json({ message: "Chassis number already registered" });
-    }
-
-    const driver = await DriverModel.findOne({ email: driverEmail });
-    if (!driver) {
-      return res.status(400).json({ message: "Driver not found" });
-    }
-
     const VehicleId = await handlegenerateId();
+
+    const existingVehicle = await VehicleModel.findOne({ VehicleId });
+    if (existingVehicle) {
+      return res.status(400).json({ message: "Vehicle already registered" });
+    }
 
     const newVehicle = new VehicleModel({
       VehicleId,
@@ -68,15 +60,14 @@ const handleAddVehicle = async (req, res) => {
       permitType,
       ownersName,
       ownersLicense,
-      address: {
-        addressLine1,
-        addressLine2,
+      OwnersAddress: {
+        addressLine,
         state,
         country,
       },
+      AssignedDriver,
       insurance,
       insuranceDueDate: insurance ? insuranceDueDate : null,
-      driver_id: driver._id,
       client_id: clientId,
     });
 
@@ -87,12 +78,6 @@ const handleAddVehicle = async (req, res) => {
       client.vehicles.push(newVehicle._id);
       await client.save();
     }
-
-    await DriverModel.findByIdAndUpdate(
-      driver._id,
-      { assignedVehicle: newVehicle._id },
-      { new: true }
-    );
 
     return res.status(200).json({
       message: "Vehicle added successfully",
