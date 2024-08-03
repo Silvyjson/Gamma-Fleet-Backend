@@ -41,7 +41,7 @@ const handleAddVehicle = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const VevicleId = await handlegenerateId();
+    const vehicleId = await handlegenerateId();
 
     const existingVehicle = await VehicleModel.findOne({ vehicleId });
     if (existingVehicle) {
