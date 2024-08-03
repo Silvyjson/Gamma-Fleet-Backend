@@ -16,8 +16,8 @@ Router.post("/add-client-budget", AuthenticateClient, handleAddClientBudget);
 
 Router.post("/add-vehicle", AuthenticateClient, handleAddVehicle);
 
-AuthRouter.get("/get-vehicle", AuthenticateClient, handleGetAllVehicle);
+Router.get("/get-vehicle", AuthenticateClient, handleGetAllVehicle);
 
-AuthRouter.get("/get-vehicle/:id", AuthenticateClient, handleGetOneVehicle);
+Router.get("/get-vehicle/:id", AuthenticateClient, handleGetOneVehicle);
 
 module.exports = Router;

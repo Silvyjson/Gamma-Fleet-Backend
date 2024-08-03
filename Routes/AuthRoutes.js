@@ -29,6 +29,8 @@ AuthRouter.post("/register-client", Verification, handleRegisterClient);
 
 AuthRouter.post("/verify-client", AuthenticateClient, handleVerifyClient);
 
+AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
+
 AuthRouter.post("/login", handleLogin);
 
 AuthRouter.post(
@@ -48,8 +50,6 @@ AuthRouter.post(
 AuthRouter.get("/get-driver", AuthenticateClient, handleGetAllDriver);
 
 AuthRouter.get("/get-driver/:id", AuthenticateClient, handleGetOneDriver);
-
-AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
 
 AuthRouter.post("/forgot-Password", handleForgotPassword);
 
