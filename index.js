@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 
 const AuthRoutes = require("./Routes/AuthRoutes");
 const Routes = require("./Routes/OtherRoutes");
-const Documentation = require("./VIEW/documentation");
+const Documentation = require("./View/documentation");
 const deleteNonverifiedUsers = require("./Utilities/DeleteNonverifiedUsers");
 
 const app = express();
