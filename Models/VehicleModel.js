@@ -23,11 +23,16 @@ const VehicleSchema = new mongoose.Schema({
     state: { type: String, required: true },
     country: { type: String, required: true },
   },
-  insurance: { type: Boolean, required: true },
+  insurance: { type: String, required: true },
   insuranceDueDate: { type: Date },
   assignedDriver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   maintenanceRecords: { type: [String] },
+  status: {
+    type: String,
+    enum: ["active", "inactive", "idle", "waiting"],
+    default: "active",
+  },
   trips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],
   registrationTime: { type: Date, default: Date.now },
 });

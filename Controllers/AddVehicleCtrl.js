@@ -1,7 +1,5 @@
-const mongoose = require("mongoose");
 const VehicleModel = require("../Models/VehicleModel");
 const ClientModel = require("../Models/ClientModel");
-const DriverModel = require("../Models/DriverModel");
 const { handlegenerateId } = require("../Utilities/GenerateId");
 
 const handleAddVehicle = async (req, res) => {
@@ -17,9 +15,11 @@ const handleAddVehicle = async (req, res) => {
       ownersLicense,
       ownersAddress: { addressLine, state, country },
       assignedDriver,
-      insurance,
+      insurance: insuranceString,
       insuranceDueDate,
     } = req.body;
+
+    const insurance = insuranceString === "Yes";
 
     const clientId = req.client.id;
 
@@ -43,7 +43,7 @@ const handleAddVehicle = async (req, res) => {
 
     const vehicleId = await handlegenerateId();
 
-    const existingVehicle = await VehicleModel.findOne({ chassisNumber });
+    const existingVehicle = await VehicleModel.findOne({ vehicleId });
     if (existingVehicle) {
       return res.status(400).json({ message: "Vehicle already registered" });
     }
@@ -82,6 +82,7 @@ const handleAddVehicle = async (req, res) => {
       newVehicle,
     });
   } catch (error) {
+    console.error("Error in handleAddVehicle:", error);
     return res.status(500).json({ error_message: error.message });
   }
 };
