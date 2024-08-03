@@ -57,6 +57,7 @@ const handleRegisterDriver = async (req, res) => {
       fullName,
       client.clientName,
       email,
+      password,
       inviteLink
     );
 
