@@ -1,14 +1,12 @@
 const TripModel = require("../../Models/TripModel");
 const DriverModel = require("../../Models/DriverModel");
-const {
-  handleAddCompanyBudget,
-} = require("./CostMaintenace_Controllers/AddClientBudgetCtrl");
+const { handlegenerateTripId } = require("../Utilities/GenerateId");
 
 const handleCreateTrip = async (req, res) => {
   try {
     const { from, to, distance, startTime, driverId } = req.body;
 
-    const tripId = await handleAddCompanyBudget();
+    const tripId = await handlegenerateTripId();
 
     const newTrip = new TripModel({
       tripId,

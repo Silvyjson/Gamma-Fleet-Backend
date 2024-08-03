@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const VehicleModel = require("../Models/VehicleModel");
 const ClientModel = require("../Models/ClientModel");
 const DriverModel = require("../Models/DriverModel");
+const { handlegenerateVehicleId } = require("../Utilities/GenerateId");
 
 const handleAddVehicle = async (req, res) => {
   try {
@@ -55,7 +56,10 @@ const handleAddVehicle = async (req, res) => {
       return res.status(400).json({ message: "Driver not found" });
     }
 
+    const VehicleId = await handlegenerateVehicleId();
+
     const newVehicle = new VehicleModel({
+      VehicleId,
       VehicleName,
       model,
       ChassisNumber,
