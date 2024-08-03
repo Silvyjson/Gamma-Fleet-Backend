@@ -8,7 +8,7 @@ const handleAddVehicle = async (req, res) => {
   try {
     const {
       VehicleName,
-      model,
+      Model,
       ChassisNumber,
       productType,
       purchaseDate,
@@ -27,7 +27,7 @@ const handleAddVehicle = async (req, res) => {
 
     if (
       !VehicleName ||
-      !model ||
+      !Model ||
       !ChassisNumber ||
       !productType ||
       !purchaseDate ||
@@ -53,7 +53,7 @@ const handleAddVehicle = async (req, res) => {
     const newVehicle = new VehicleModel({
       VehicleId,
       VehicleName,
-      model,
+      Model,
       ChassisNumber,
       productType,
       purchaseDate,
