@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const VehicleSchema = new mongoose.Schema({
-  VehicleName: { type: String, required: true },
-  VehicleId: { type: String, required: true, unique: true },
-  Model: { type: String, required: true },
-  ChassisNumber: { type: String, required: true, unique: true },
+  vehicleName: { type: String, required: true },
+  vehicleId: { type: String, required: true, unique: true },
+  model: { type: String, required: true },
+  chassisNumber: { type: String, required: true, unique: true },
   productType: {
     type: String,
     required: true,
@@ -18,14 +18,14 @@ const VehicleSchema = new mongoose.Schema({
   },
   ownersName: { type: String, required: true },
   ownersLicense: { type: String, required: true },
-  OwnersAddress: {
+  ownersAddress: {
     addressLine: { type: String, required: true },
     state: { type: String, required: true },
     country: { type: String, required: true },
   },
   insurance: { type: Boolean, required: true },
   insuranceDueDate: { type: Date },
-  AssignedDriver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
+  assignedDriver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   maintenanceRecords: { type: [String] },
   trips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],

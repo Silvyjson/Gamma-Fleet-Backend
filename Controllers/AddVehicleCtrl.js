@@ -7,9 +7,9 @@ const { handlegenerateId } = require("../Utilities/GenerateId");
 const handleAddVehicle = async (req, res) => {
   try {
     const {
-      VehicleName,
-      Model,
-      ChassisNumber,
+      vehicleName,
+      model,
+      chassisNumber,
       productType,
       purchaseDate,
       permitType,
@@ -18,7 +18,7 @@ const handleAddVehicle = async (req, res) => {
       addressLine,
       state,
       country,
-      AssignedDriver,
+      assignedDriver,
       insurance,
       insuranceDueDate,
     } = req.body;
@@ -26,9 +26,9 @@ const handleAddVehicle = async (req, res) => {
     const clientId = req.client.id;
 
     if (
-      !VehicleName ||
-      !Model ||
-      !ChassisNumber ||
+      !vehicleName ||
+      !model ||
+      !chassisNumber ||
       !productType ||
       !purchaseDate ||
       !permitType ||
@@ -37,7 +37,7 @@ const handleAddVehicle = async (req, res) => {
       !addressLine ||
       !state ||
       !country ||
-      !AssignedDriver ||
+      !assignedDriver ||
       insurance === undefined
     ) {
       return res.status(400).json({ message: "All fields are required" });
@@ -52,20 +52,20 @@ const handleAddVehicle = async (req, res) => {
 
     const newVehicle = new VehicleModel({
       VehicleId,
-      VehicleName,
-      Model,
-      ChassisNumber,
+      vehicleName,
+      model,
+      chassisNumber,
       productType,
       purchaseDate,
       permitType,
       ownersName,
       ownersLicense,
-      OwnersAddress: {
+      ownersAddress: {
         addressLine,
         state,
         country,
       },
-      AssignedDriver,
+      assignedDriver,
       insurance,
       insuranceDueDate: insurance ? insuranceDueDate : null,
       client_id: clientId,
