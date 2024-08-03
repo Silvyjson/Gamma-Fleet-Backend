@@ -105,7 +105,7 @@ const handleVerifyClient = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    const token = jwt.sign({ user: user }, process.env.JWT_TOKEN, {
+    const token = jwt.sign({ userId: user }, process.env.JWT_TOKEN, {
       expiresIn: "7h",
     });
 

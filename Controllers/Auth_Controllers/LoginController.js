@@ -35,7 +35,7 @@ const handleLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ user: user }, process.env.JWT_TOKEN, {
+    const token = jwt.sign({ userId: user }, process.env.JWT_TOKEN, {
       expiresIn: "7h",
     });
 

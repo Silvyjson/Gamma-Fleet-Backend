@@ -1,12 +1,12 @@
 const TripModel = require("../../Models/TripModel");
 const DriverModel = require("../../Models/DriverModel");
-const { handlegenerateTripId } = require("../Utilities/GenerateId");
+const { handlegenerateId } = require("../Utilities/GenerateId");
 
 const handleCreateTrip = async (req, res) => {
   try {
     const { from, to, distance, startTime, driverId } = req.body;
 
-    const tripId = await handlegenerateTripId();
+    const tripId = await handlegenerateId();
 
     const newTrip = new TripModel({
       tripId,

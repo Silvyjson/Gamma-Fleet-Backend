@@ -19,6 +19,8 @@ const {
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterAdminCtrl");
 const {
   handleRegisterDriver,
+  handleGetAllDriver,
+  handleGetOneDriver,
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterDriverCtrl");
 const { handleAddVehicle } = require("../Controllers/AddVehicleCtrl");
 
@@ -29,8 +31,6 @@ AuthRouter.post("/register-client", Verification, handleRegisterClient);
 AuthRouter.post("/verify-client", AuthenticateClient, handleVerifyClient);
 
 AuthRouter.post("/login", handleLogin);
-
-AuthRouter.post("/add-vehicle", AuthenticateClient, handleAddVehicle);
 
 AuthRouter.post(
   "/register-admin",
@@ -46,10 +46,16 @@ AuthRouter.post(
   handleRegisterDriver
 );
 
+AuthRouter.get("/get-driver", AuthenticateClient, handleGetAllDriver);
+
+AuthRouter.get("/get-driver/:id", AuthenticateClient, handleGetOneDriver);
+
 AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
 
 AuthRouter.post("/forgot-Password", handleForgotPassword);
 
 AuthRouter.post("/reset-Password", handleResetPassword);
+
+AuthRouter.post("/add-vehicle", AuthenticateClient, handleAddVehicle);
 
 module.exports = AuthRouter;
