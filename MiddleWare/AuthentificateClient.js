@@ -14,7 +14,7 @@ const AuthenticateClient = async (req, res, next) => {
       return res.status(401).json({ message: "Access Denied" });
     }
 
-    const client = await ClientModel.findById(verifiedToken.userId);
+    const client = await ClientModel.findById(verifiedToken.user);
 
     if (!client) {
       return res.status(404).json({ message: "client not found" });
