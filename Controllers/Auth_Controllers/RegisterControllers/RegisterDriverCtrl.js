@@ -40,7 +40,7 @@ const handleRegisterDriver = async (req, res) => {
       client_id: clientId,
     });
 
-    await newDriver.save();
+    const savedDriver = await newDriver.save();
 
     const client = await ClientModel.findById(clientId);
 
@@ -49,7 +49,8 @@ const handleRegisterDriver = async (req, res) => {
     }
 
     client.drivers.push(newDriver._id);
-    await client.save();
+
+    const savedClient = await client.save();
 
     const subject = "Driver Registration Invitation";
     const inviteLink = `https://silvyjson.github.io/Gamma-Fleet/signIn-page`;
@@ -61,7 +62,9 @@ const handleRegisterDriver = async (req, res) => {
       inviteLink
     );
 
-    await SendEmail(email, subject, message);
+    if (savedDriver && savedClient) {
+      await SendEmail(email, subject, message);
+    }
 
     return res.status(200).json({
       message:

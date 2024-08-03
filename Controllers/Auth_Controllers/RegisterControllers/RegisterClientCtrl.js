@@ -62,13 +62,15 @@ const handleRegisterClient = async (req, res) => {
       maxAge: 1 * 60 * 60 * 1000,
     });
 
+    const savedClient = await newClient.save();
+
     const subject = "Verification Mail";
     const OTP = otp;
     const message = VerificationMail(clientName, OTP);
 
-    await SendEmail(email, subject, message);
-
-    await newClient.save();
+    if (savedClient) {
+      await SendEmail(email, subject, message);
+    }
 
     const { password: _, ...safeClient } = newClient.toObject();
 
@@ -146,13 +148,15 @@ const handleGenerateNewOTP = async (req, res) => {
     user.otp = otp;
     user.otpExpiry = Date.now() + 3600000;
 
+    const savedUser = await user.save();
+
     const subject = "Verification Mail";
     const OTP = otp;
     const message = VerificationMail(user.clientName, OTP);
 
-    await SendEmail(user.email, subject, message);
-
-    await user.save();
+    if (savedUser) {
+      await SendEmail(user.email, subject, message);
+    }
 
     return res.status(200).json({ message: "otp generated successfully" });
   } catch (error) {
