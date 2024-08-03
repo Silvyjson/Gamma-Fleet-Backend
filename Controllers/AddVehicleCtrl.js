@@ -5,26 +5,49 @@ const DriverModel = require("../Models/DriverModel");
 
 const handleAddVehicle = async (req, res) => {
   try {
-    const { vehicleNumber, make, model, year, capacity, driverEmail } =
-      req.body;
+    const {
+      VehicleName,
+      model,
+      ChassisNumber,
+      productType,
+      purchaseDate,
+      permitType,
+      ownersName,
+      ownersLicense,
+      addressLine1,
+      addressLine2,
+      state,
+      country,
+      insurance,
+      insuranceDueDate,
+      driverEmail,
+    } = req.body;
+
     const clientId = req.client.id;
 
     if (
-      !vehicleNumber ||
-      !make ||
+      !VehicleName ||
       !model ||
-      !year ||
-      !capacity ||
+      !ChassisNumber ||
+      !productType ||
+      !purchaseDate ||
+      !permitType ||
+      !ownersName ||
+      !ownersLicense ||
+      !addressLine1 ||
+      !state ||
+      !country ||
+      insurance === undefined ||
       !driverEmail
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingVehicle = await VehicleModel.findOne({ vehicleNumber });
+    const existingVehicle = await VehicleModel.findOne({ VehicleName });
     if (existingVehicle) {
       return res
         .status(400)
-        .json({ message: "Vehicle number already registered" });
+        .json({ message: "Chassis number already registered" });
     }
 
     const driver = await DriverModel.findOne({ email: driverEmail });
@@ -33,11 +56,22 @@ const handleAddVehicle = async (req, res) => {
     }
 
     const newVehicle = new VehicleModel({
-      vehicleNumber,
-      make,
+      VehicleName,
       model,
-      year,
-      capacity,
+      ChassisNumber,
+      productType,
+      purchaseDate,
+      permitType,
+      ownersName,
+      ownersLicense,
+      address: {
+        addressLine1,
+        addressLine2,
+        state,
+        country,
+      },
+      insurance,
+      insuranceDueDate: insurance ? insuranceDueDate : null,
       driver_id: driver._id,
       client_id: clientId,
     });

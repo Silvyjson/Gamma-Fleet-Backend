@@ -4,13 +4,28 @@ const DriverModel = require("../../../Models/DriverModel");
 const SendEmail = require("../../../Utilities/SendEmail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { VerificationMail } = require("../../../View/mailDetails");
 
 const handleRegisterClient = async (req, res) => {
   try {
-    const { clientName, email, password } = req.body;
+    const {
+      email,
+      password,
+      clientName,
+      clientAddress,
+      taxId,
+      servicesOffered,
+    } = req.body;
 
-    if (!clientName || !email || !password) {
+    if (
+      !email ||
+      !password ||
+      !clientName ||
+      !clientAddress ||
+      !taxId ||
+      !servicesOffered
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -23,33 +38,37 @@ const handleRegisterClient = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const otp = crypto.randomInt(1000, 9999).toString();
 
     const newClient = new ClientModel({
-      clientName,
       email,
       password: hashedPassword,
-      phoneNumber: "",
-      address: "",
-      taxId: "",
-      servicesOffered: "",
-      clientLogo: "",
-      Budgets: [],
-      admins: [],
-      drivers: [],
-      vehicles: [],
+      clientName,
+      clientAddress,
+      taxId,
+      servicesOffered,
+      otp,
+      otpExpiry: Date.now() + 3600000,
     });
-
-    await newClient.save();
 
     const token = jwt.sign({ userId: newClient._id }, process.env.JWT_TOKEN, {
       expiresIn: "1h",
     });
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 1 * 60 * 60 * 1000,
+    });
+
     const subject = "Verification Mail";
-    const verificationLink = `http://localhost:8008/api/verify-client?token=${token}`;
-    const message = VerificationMail(clientName, verificationLink);
+    const OTP = otp;
+    const message = VerificationMail(clientName, OTP);
 
     await SendEmail(email, subject, message);
+
+    await newClient.save();
 
     const { password: _, ...safeClient } = newClient.toObject();
 
@@ -57,6 +76,7 @@ const handleRegisterClient = async (req, res) => {
       message:
         "Client registered successfully, a verification mail has been sent to your email address",
       newClient: safeClient,
+      token,
     });
   } catch (error) {
     return res.status(500).json({ error_message: error.message });
@@ -65,62 +85,76 @@ const handleRegisterClient = async (req, res) => {
 
 const handleVerifyClient = async (req, res) => {
   try {
-    const { token } = req.query;
+    const { otp } = req.body;
 
-    if (!token) {
-      return res.status(400).json({ message: "Something went wrong" });
+    if (!otp) {
+      return res.status(400).json({ message: "OTP is required" });
     }
 
-    const verificationToken = jwt.verify(token, process.env.JWT_TOKEN);
-    const user = await ClientModel.findById(verificationToken.userId);
+    const user = await ClientModel.findById(req.client.id);
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid verification token" });
+      return res.status(400).json({ message: "User not found" });
     }
 
-    if (user.isVerified === true) {
+    if (user.isVerified) {
       return res.status(400).json({ message: "User is already verified" });
     }
 
+    if (user.otp !== otp || user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    const token = jwt.sign({ user: user }, process.env.JWT_TOKEN, {
+      expiresIn: "7h",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 60 * 60 * 1000,
+    });
+
     user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
     await user.save();
 
-    return res.status(200).json({ message: "Email verified successfully" });
+    return res
+      .status(200)
+      .json({ message: "Email verified successfully", user, token });
   } catch (error) {
+    console.error("Error in handleVerifyClient:", error);
     return res.status(500).json({ error_message: error.message });
   }
 };
 
-const handleCompleteRegisterClient = async (req, res) => {
+const handleGenerateNewOTP = async (req, res) => {
   try {
-    const clientId = req.client.id;
+    const user = await ClientModel.findById(req.client.id);
 
-    const { phoneNumber, address, taxId, servicesOffered, clientLogo } =
-      req.body;
-
-    if (!phoneNumber || !address || !taxId || !servicesOffered || !clientLogo) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
 
-    const client = await ClientModel.findByIdAndUpdate(
-      clientId,
-      {
-        phoneNumber,
-        address,
-        taxId,
-        servicesOffered,
-        clientLogo,
-      },
-      { new: true }
-    );
-
-    if (!client) {
-      return res.status(404).json({ message: "User not found" });
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User is already verified" });
     }
 
-    return res.status(200).json({
-      message: "Changes saved successfully",
-    });
+    const otp = crypto.randomInt(1000, 9999).toString();
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 3600000;
+
+    const subject = "Verification Mail";
+    const OTP = otp;
+    const message = VerificationMail(user.clientName, OTP);
+
+    await SendEmail(user.email, subject, message);
+
+    await user.save();
+
+    return res.status(200).json({ message: "otp generated successfully" });
   } catch (error) {
     return res.status(500).json({ error_message: error.message });
   }
@@ -129,5 +163,5 @@ const handleCompleteRegisterClient = async (req, res) => {
 module.exports = {
   handleRegisterClient,
   handleVerifyClient,
-  handleCompleteRegisterClient,
+  handleGenerateNewOTP,
 };

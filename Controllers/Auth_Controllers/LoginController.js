@@ -35,8 +35,15 @@ const handleLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_TOKEN, {
-      expiresIn: "1h",
+    const token = jwt.sign({ user: user }, process.env.JWT_TOKEN, {
+      expiresIn: "7h",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 60 * 60 * 1000,
     });
 
     const { password: _, ...safeUser } = user.toObject();

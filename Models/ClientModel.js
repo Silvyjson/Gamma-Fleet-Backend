@@ -4,12 +4,12 @@ const ClientSchema = new mongoose.Schema({
   clientName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  phoneNumber: { type: Number },
-  address: { type: String },
-  taxId: { type: String },
+  clientAddress: { type: String, required: true },
+  taxId: { type: String, required: true },
   servicesOffered: {
     type: String,
-    enum: ["logistics", "transportation", ""],
+    enum: ["logistics", "transportation"],
+    required: true,
   },
   clientLogo: { type: String },
   budgets: [{ type: mongoose.Schema.Types.ObjectId, ref: "ClientBudget" }],
@@ -27,7 +27,8 @@ const ClientSchema = new mongoose.Schema({
   role: { type: String, default: "superAdmin" },
   isVerified: { type: Boolean, default: false },
   registrationTime: { type: Date, default: Date.now },
-  verificationToken: { type: String },
+  otp: { type: String },
+  otpExpiry: { type: Date },
 });
 
 const ClientModel = mongoose.model("Clients", ClientSchema);

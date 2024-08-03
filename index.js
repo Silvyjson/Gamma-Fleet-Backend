@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const cron = require("node-cron");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 const AuthRoutes = require("./Routes/AuthRoutes");
 const Routes = require("./Routes/OtherRoutes");
@@ -12,18 +14,21 @@ const deleteNonverifiedUsers = require("./Utilities/DeleteNonverifiedUsers");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(helmet());
 
 const PORT = process.env.PORT || 8080;
 const MONGODB_URL = process.env.MONGODB_URL;
 
 mongoose
   .connect(MONGODB_URL)
-  .then(() => console.log("MongoDB connected successfully"))
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Mongodb connected and server is running on port ${PORT}`);
+    });
+  })
   .catch(() => console.log("Failed to connect to MongoDB"));
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 // scheduled tasks to delete unverified user accounts with expired token
 cron.schedule("* * * * *", async () => {
@@ -42,4 +47,9 @@ app.use((req, res) => {
   res.status(404).json({
     message: "Page not found",
   });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error_message: err.message });
 });

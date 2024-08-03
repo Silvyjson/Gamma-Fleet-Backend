@@ -5,7 +5,7 @@ const Verification = require("../MiddleWare/Verification");
 const {
   handleRegisterClient,
   handleVerifyClient,
-  handleCompleteRegisterClient,
+  handleGenerateNewOTP,
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterClientCtrl");
 const {
   handleLogin,
@@ -20,20 +20,17 @@ const {
 const {
   handleRegisterDriver,
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterDriverCtrl");
+const { handleAddVehicle } = require("../Controllers/AddVehicleCtrl");
 
 const AuthRouter = express.Router();
 
 AuthRouter.post("/register-client", Verification, handleRegisterClient);
 
-AuthRouter.get("/verify-client", handleVerifyClient);
-
-AuthRouter.patch(
-  "/complete-client-rigister",
-  AuthenticateClient,
-  handleCompleteRegisterClient
-);
+AuthRouter.post("/verify-client", AuthenticateClient, handleVerifyClient);
 
 AuthRouter.post("/login", handleLogin);
+
+AuthRouter.post("/add-vehicle", AuthenticateClient, handleAddVehicle);
 
 AuthRouter.post(
   "/register-admin",
@@ -48,6 +45,8 @@ AuthRouter.post(
   Verification,
   handleRegisterDriver
 );
+
+AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
 
 AuthRouter.post("/forgot-Password", handleForgotPassword);
 
