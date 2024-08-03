@@ -8,7 +8,7 @@ const ClientSchema = new mongoose.Schema({
   taxId: { type: String, required: true },
   servicesOffered: {
     type: String,
-    enum: ["logistics", "transportation"],
+    enum: ["Logistics", "Transportation"],
     required: true,
   },
   clientLogo: { type: String },
