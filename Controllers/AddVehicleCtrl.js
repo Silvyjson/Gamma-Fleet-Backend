@@ -45,11 +45,9 @@ const handleAddVehicle = async (req, res) => {
 
     const existingVehicle = await VehicleModel.findOne({ chassisNumber });
     if (existingVehicle) {
-      return res
-        .status(400)
-        .json({
-          message: "Vehicle with the chassis number already registered",
-        });
+      return res.status(400).json({
+        message: "Vehicle with the chassis number already registered",
+      });
     }
 
     const newVehicle = new VehicleModel({
@@ -81,6 +79,11 @@ const handleAddVehicle = async (req, res) => {
       await client.save();
     }
 
+    const driver = await DriverModel.findById(assignedDriver);
+    if (driver) {
+      driver.vehicles.push(newVehicle._id);
+      await driver.save();
+    }
     return res.status(200).json({
       message: "Vehicle added successfully",
       newVehicle,
