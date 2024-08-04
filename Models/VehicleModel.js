@@ -36,7 +36,7 @@ const VehicleSchema = new mongoose.Schema({
     enum: ["Active", "Inactive", "Idle", "Waiting"],
     default: "Active",
   },
-  trips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],
+  trips: { type: [mongoose.Schema.Types.ObjectId], ref: "Trip", default: [] },
   registrationTime: { type: Date, default: Date.now },
 });
 

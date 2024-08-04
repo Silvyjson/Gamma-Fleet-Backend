@@ -54,8 +54,6 @@ const handleAddVehicle = async (req, res) => {
     const driver = await DriverModel.findById(assignedDriver);
     const driverName = driver.fullName;
 
-    console.log(driver);
-
     const newVehicle = new VehicleModel({
       vehicleId,
       vehicleName,
@@ -90,9 +88,7 @@ const handleAddVehicle = async (req, res) => {
 
     await DriverModel.findByIdAndUpdate(
       assignedDriver,
-      {
-        $push: { assignedVehicle: newVehicle._id },
-      },
+      { assignedVehicle: newVehicle._id },
       { new: true }
     );
 
