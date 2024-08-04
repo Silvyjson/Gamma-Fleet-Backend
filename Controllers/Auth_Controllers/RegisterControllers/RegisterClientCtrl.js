@@ -173,9 +173,7 @@ const handleGetClient = async (req, res) => {
     }
     console.log(clientId);
 
-    const client = await ClientModel.findOne({
-      client_id: clientId,
-    });
+    const client = await ClientModel.findById(clientId);
 
     if (!client) {
       return res.status(404).json({ message: "Client not found" });
