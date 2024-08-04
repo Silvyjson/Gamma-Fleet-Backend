@@ -6,6 +6,7 @@ const {
   handleRegisterClient,
   handleVerifyClient,
   handleGenerateNewOTP,
+  handleGetClient,
 } = require("../Controllers/Auth_Controllers/RegisterControllers/RegisterClientCtrl");
 const {
   handleLogin,
@@ -30,6 +31,8 @@ AuthRouter.post("/register-client", Verification, handleRegisterClient);
 AuthRouter.post("/verify-client", AuthenticateClient, handleVerifyClient);
 
 AuthRouter.patch("/generate-new-otp", AuthenticateClient, handleGenerateNewOTP);
+
+AuthRouter.get("/get-client", AuthenticateClient, handleGetClient);
 
 AuthRouter.post("/login", handleLogin);
 

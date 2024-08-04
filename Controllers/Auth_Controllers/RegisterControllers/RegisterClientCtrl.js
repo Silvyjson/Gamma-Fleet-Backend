@@ -164,8 +164,27 @@ const handleGenerateNewOTP = async (req, res) => {
   }
 };
 
+const handleGetClient = async (req, res) => {
+  try {
+    const clientId = req.client.id;
+
+    const client = await ClientModel.findOne({
+      client_id: clientId,
+    });
+
+    if (!client) {
+      return res.status(404).json({ message: "Client not found" });
+    }
+
+    return res.status(200).json({ client });
+  } catch (error) {
+    return res.status(500).json({ error_message: error.message });
+  }
+};
+
 module.exports = {
   handleRegisterClient,
   handleVerifyClient,
   handleGenerateNewOTP,
+  handleGetClient,
 };
