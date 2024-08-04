@@ -25,7 +25,10 @@ const VehicleSchema = new mongoose.Schema({
   },
   insurance: { type: String, required: true },
   insuranceDueDate: { type: Date },
-  assignedDriver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
+  assignedDriver: {
+    driver_id: { type: mongoose.Schema.Types.ObjectId, ref: "Driver" },
+    driverName: { type: String, required: true },
+  },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   maintenanceRecords: { type: [String] },
   status: {

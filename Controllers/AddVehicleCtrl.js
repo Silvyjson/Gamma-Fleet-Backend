@@ -50,6 +50,9 @@ const handleAddVehicle = async (req, res) => {
       });
     }
 
+    const Driver = DriverModel.findById(assignedDriver);
+    const driverName = Driver.fullName;
+
     const newVehicle = new VehicleModel({
       vehicleId,
       vehicleName,
@@ -65,7 +68,10 @@ const handleAddVehicle = async (req, res) => {
         state,
         country,
       },
-      assignedDriver,
+      assignedDriver: {
+        driverId: assignedDriver,
+        driverName: driverName,
+      },
       insurance,
       insuranceDueDate: insurance ? insuranceDueDate : null,
       client_id: clientId,
@@ -84,6 +90,7 @@ const handleAddVehicle = async (req, res) => {
       driver.vehicles.push(newVehicle._id);
       await driver.save();
     }
+
     return res.status(200).json({
       message: "Vehicle added successfully",
       newVehicle,

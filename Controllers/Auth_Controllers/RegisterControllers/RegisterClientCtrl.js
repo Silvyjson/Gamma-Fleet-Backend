@@ -168,11 +168,6 @@ const handleGetClient = async (req, res) => {
   try {
     const clientId = req.client.id;
 
-    if (!clientId) {
-      return res.status(400).json({ message: "Client ID is required" });
-    }
-    console.log(clientId);
-
     const client = await ClientModel.findById(clientId);
 
     if (!client) {
