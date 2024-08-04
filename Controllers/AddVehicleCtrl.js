@@ -43,7 +43,7 @@ const handleAddVehicle = async (req, res) => {
 
     const vehicleId = await handlegenerateId();
 
-    const existingVehicle = await VehicleModel.findOne({ vehicleId });
+    const existingVehicle = await VehicleModel.findOne({ chassisNumber });
     if (existingVehicle) {
       return res.status(400).json({ message: "Vehicle already registered" });
     }
