@@ -1,5 +1,6 @@
 const VehicleModel = require("../Models/VehicleModel");
 const ClientModel = require("../Models/ClientModel");
+const DriverModel = require("../Models/DriverModel");
 const { handlegenerateId } = require("../Utilities/GenerateId");
 
 const handleAddVehicle = async (req, res) => {
