@@ -11,7 +11,7 @@ const DriverSchema = new mongoose.Schema({
   performanceRate: { type: Number, default: 0 },
   assignedVehicle: {
     vehicle_id: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
-    vehicleName: { type: String, required: true },
+    vehicleName: { type: String },
   },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   budgets: [{ type: mongoose.Schema.Types.ObjectId, ref: "DriverBudget" }],
