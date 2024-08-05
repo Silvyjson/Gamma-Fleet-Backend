@@ -9,7 +9,10 @@ const DriverSchema = new mongoose.Schema({
   licenseNumber: { type: String, required: true, unique: true },
   address: { type: String, required: true },
   performanceRate: { type: Number, default: 0 },
-  assignedVehicle: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
+  assignedVehicle: {
+    vehicle_id: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
+    vehicleName: { type: String, required: true },
+  },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   budgets: [{ type: mongoose.Schema.Types.ObjectId, ref: "DriverBudget" }],
   trips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],

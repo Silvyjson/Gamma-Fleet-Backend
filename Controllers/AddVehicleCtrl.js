@@ -88,7 +88,12 @@ const handleAddVehicle = async (req, res) => {
 
     await DriverModel.findByIdAndUpdate(
       assignedDriver,
-      { assignedVehicle: newVehicle._id },
+      {
+        assignedVehicle: {
+          vehicle_id: newVehicle._id,
+          vehicleName: newVehicle.vehicleName,
+        },
+      },
       { new: true }
     );
 

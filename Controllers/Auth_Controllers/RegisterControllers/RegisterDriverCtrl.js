@@ -36,7 +36,10 @@ const handleRegisterDriver = async (req, res) => {
       phoneNumber,
       licenseNumber,
       address,
-      assignedVehicle: null,
+      assignedVehicle: {
+        vehicle_id: null,
+        vehicleName: null,
+      },
       client_id: clientId,
     });
 
