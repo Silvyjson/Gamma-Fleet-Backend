@@ -17,9 +17,12 @@ const TripSchema = new mongoose.Schema({
   expenses: { type: Number, default: 0 },
   driverPerformancePoint: { type: Number, default: 0 },
   driver: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Driver",
-    required: true,
+    driver_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Driver",
+      required: true,
+    },
+    driverName: { type: String, required: true },
   },
   createdTime: { type: Date, default: Date.now },
 });
