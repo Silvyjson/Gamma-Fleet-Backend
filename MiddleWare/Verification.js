@@ -10,14 +10,12 @@ const Verification = (req, res, next) => {
     error.push({ message: "Invalid email" });
   }
 
-  if (
-    !password ||
-    password.length < 6 ||
-    !/(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[$#&])/.test(password)
-  ) {
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/;
+
+  if (!password || !passwordRegex) {
     error.push({
       message:
-        "Password must be at least 6 characters long and must contain at least one number, one uppercase and one special character",
+        "Password must be at least 8 characters long and must contain at least one number, one uppercase and one special character",
     });
   }
 
