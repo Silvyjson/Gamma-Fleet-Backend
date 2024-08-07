@@ -18,7 +18,10 @@ app.use(cookieParser());
 // app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(
   cors({
-    origin: "https://silvyjson.github.io/Gamma-Fleet/",
+    origin: [
+      "https://silvyjson.github.io",
+      "https://silvyjson.github.io/Gamma-Fleet/",
+    ],
     credentials: true,
   })
 );
