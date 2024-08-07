@@ -58,7 +58,7 @@ const handleRegisterDriver = async (req, res) => {
         vehicle_id: null,
         vehicleName: null,
       },
-      profileImg: imageUrl,
+      profileImg: imageUrl || "",
       client_id: clientId,
     });
 
