@@ -5,11 +5,23 @@ const SendEmail = require("../../../Utilities/SendEmail");
 const { InvitationMail } = require("../../../View/mailDetails");
 const { handlegenerateId } = require("../../../Utilities/GenerateId");
 const bcrypt = require("bcrypt");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloudinary_url: process.env.CLOUDINARY_URL,
+});
 
 const handleRegisterDriver = async (req, res) => {
   try {
-    const { fullName, email, password, phoneNumber, licenseNumber, address } =
-      req.body;
+    const {
+      profileImg,
+      fullName,
+      email,
+      password,
+      phoneNumber,
+      licenseNumber,
+      address,
+    } = req.body;
     const clientId = req.client.id;
 
     if (!fullName || !phoneNumber || !licenseNumber || !address) {
@@ -28,6 +40,12 @@ const handleRegisterDriver = async (req, res) => {
 
     const driverId = handlegenerateId();
 
+    const uploadResponse = await cloudinary.uploader.upload(profileImg, {
+      folder: "drivers profile image",
+    });
+
+    const imageUrl = uploadResponse.secure_url;
+
     const newDriver = new DriverModel({
       driverId,
       fullName,
@@ -40,6 +58,7 @@ const handleRegisterDriver = async (req, res) => {
         vehicle_id: null,
         vehicleName: null,
       },
+      profileImg: imageUrl,
       client_id: clientId,
     });
 
