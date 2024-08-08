@@ -44,7 +44,13 @@ const handleRegisterClient = async (req, res) => {
       if (existingClient.isVerified === true) {
         return res.status(400).json({ message: "Client already exists" });
       } else {
-        existingClient.otp = otp;
+        email,
+          (password = hashedPassword),
+          clientName,
+          clientAddress,
+          taxId,
+          servicesOffered,
+          (existingClient.otp = otp);
         existingClient.otpExpiry = Date.now() + 3600000;
 
         await existingClient.save();
