@@ -55,9 +55,25 @@ const handleRegisterClient = async (req, res) => {
 
         await SendEmail(email, subject, message);
 
+        const token = jwt.sign(
+          { user: existingClient._id },
+          process.env.JWT_TOKEN,
+          {
+            expiresIn: "1h",
+          }
+        );
+
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "Strict",
+          maxAge: 1 * 60 * 60 * 1000,
+        });
+
         return res.status(200).json({
           message:
             "New OTP has been sent to your email address. Please verify your account.",
+          token,
         });
       }
     }
