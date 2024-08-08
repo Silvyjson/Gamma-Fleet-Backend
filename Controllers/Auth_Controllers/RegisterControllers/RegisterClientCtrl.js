@@ -32,32 +32,26 @@ const handleRegisterClient = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = crypto.randomInt(1000, 9999).toString();
 
-    const existingAdmin = await AdminModel.findOne({ email: email });
-    const existingClient = await ClientModel.findOne({ email: email });
-    const existingDriver = await DriverModel.findOne({ email: email });
+    const existingAdmin = await AdminModel.findOne({ email });
+    const existingClient = await ClientModel.findOne({ email });
+    const existingDriver = await DriverModel.findOne({ email });
 
-    if (existingAdmin || existingDriver) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    if (existingClient) {
-      if (existingClient.isVerified === true) {
-        return res.status(400).json({ message: "Client already exists" });
-      } else {
-        email,
-          (password = hashedPassword),
-          clientName,
-          clientAddress,
-          taxId,
-          servicesOffered,
-          (existingClient.otp = otp);
+    if (existingClient || existingAdmin || existingDriver) {
+      if (existingClient && existingClient.isVerified) {
+        return res.status(400).json({ message: "User already exists" });
+      } else if (existingClient) {
+        existingClient.password = hashedPassword;
+        existingClient.clientName = clientName;
+        existingClient.clientAddress = clientAddress;
+        existingClient.taxId = taxId;
+        existingClient.servicesOffered = servicesOffered;
+        existingClient.otp = otp;
         existingClient.otpExpiry = Date.now() + 3600000;
 
         await existingClient.save();
 
         const subject = "Verification Mail";
-        const OTP = otp;
-        const message = VerificationMail(clientName, OTP);
+        const message = VerificationMail(clientName, otp);
 
         await SendEmail(email, subject, message);
 
@@ -68,20 +62,16 @@ const handleRegisterClient = async (req, res) => {
       }
     }
 
-    let newClient;
-
-    if (!existingAdmin && !existingClient && !existingDriver) {
-      newClient = new ClientModel({
-        email,
-        password: hashedPassword,
-        clientName,
-        clientAddress,
-        taxId,
-        servicesOffered,
-        otp,
-        otpExpiry: Date.now() + 3600000,
-      });
-    }
+    const newClient = new ClientModel({
+      email,
+      password: hashedPassword,
+      clientName,
+      clientAddress,
+      taxId,
+      servicesOffered,
+      otp,
+      otpExpiry: Date.now() + 3600000,
+    });
 
     const token = jwt.sign({ user: newClient._id }, process.env.JWT_TOKEN, {
       expiresIn: "1h",
@@ -97,14 +87,11 @@ const handleRegisterClient = async (req, res) => {
     const savedClient = await newClient.save();
 
     const subject = "Verification Mail";
-    const OTP = otp;
-    const message = VerificationMail(clientName, OTP);
+    const message = VerificationMail(clientName, otp);
 
-    if (savedClient) {
-      await SendEmail(email, subject, message);
-    }
+    await SendEmail(email, subject, message);
 
-    const { password: _, ...safeClient } = newClient.toObject();
+    const { password: _, ...safeClient } = savedClient.toObject();
 
     return res.status(200).json({
       message:
