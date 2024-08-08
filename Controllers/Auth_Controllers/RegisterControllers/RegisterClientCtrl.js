@@ -29,27 +29,55 @@ const handleRegisterClient = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const otp = crypto.randomInt(1000, 9999).toString();
+
     const existingAdmin = await AdminModel.findOne({ email: email });
     const existingClient = await ClientModel.findOne({ email: email });
     const existingDriver = await DriverModel.findOne({ email: email });
 
-    if (existingAdmin || existingClient || existingDriver) {
+    if (existingAdmin || existingDriver) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const otp = crypto.randomInt(1000, 9999).toString();
+    if (existingClient) {
+      if (existingClient.isVerified === true) {
+        return res
+          .status(400)
+          .json({ message: "Client already exists and is verified" });
+      } else {
+        existingClient.otp = otp;
+        existingClient.otpExpiry = Date.now() + 3600000;
 
-    const newClient = new ClientModel({
-      email,
-      password: hashedPassword,
-      clientName,
-      clientAddress,
-      taxId,
-      servicesOffered,
-      otp,
-      otpExpiry: Date.now() + 3600000,
-    });
+        await existingClient.save();
+
+        const subject = "Verification Mail";
+        const OTP = otp;
+        const message = VerificationMail(clientName, OTP);
+
+        await SendEmail(email, subject, message);
+
+        return res.status(200).json({
+          message:
+            "New OTP has been sent to your email address. Please verify your account.",
+        });
+      }
+    }
+
+    let newClient;
+
+    if (!existingAdmin && !existingClient && !existingDriver) {
+      newClient = new ClientModel({
+        email,
+        password: hashedPassword,
+        clientName,
+        clientAddress,
+        taxId,
+        servicesOffered,
+        otp,
+        otpExpiry: Date.now() + 3600000,
+      });
+    }
 
     const token = jwt.sign({ user: newClient._id }, process.env.JWT_TOKEN, {
       expiresIn: "1h",
