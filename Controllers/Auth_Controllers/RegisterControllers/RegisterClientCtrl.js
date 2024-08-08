@@ -73,6 +73,7 @@ const handleRegisterClient = async (req, res) => {
         return res.status(200).json({
           message:
             "New OTP has been sent to your email address. Please verify your account.",
+          token,
         });
       }
     } else {
@@ -111,6 +112,7 @@ const handleRegisterClient = async (req, res) => {
         message:
           "Client registered successfully, a verification mail has been sent to your email address",
         newClient: safeClient,
+        token,
       });
     }
   } catch (error) {
