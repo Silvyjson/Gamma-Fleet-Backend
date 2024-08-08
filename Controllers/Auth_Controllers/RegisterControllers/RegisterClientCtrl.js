@@ -73,48 +73,46 @@ const handleRegisterClient = async (req, res) => {
         return res.status(200).json({
           message:
             "New OTP has been sent to your email address. Please verify your account.",
-          token,
         });
       }
+    } else {
+      const newClient = new ClientModel({
+        email,
+        password: hashedPassword,
+        clientName,
+        clientAddress,
+        taxId,
+        servicesOffered,
+        otp,
+        otpExpiry: Date.now() + 3600000,
+      });
+
+      const token = jwt.sign({ user: newClient._id }, process.env.JWT_TOKEN, {
+        expiresIn: "1h",
+      });
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "Strict",
+        maxAge: 1 * 60 * 60 * 1000,
+      });
+
+      const savedClient = await newClient.save();
+
+      const subject = "Verification Mail";
+      const message = VerificationMail(clientName, otp);
+
+      await SendEmail(email, subject, message);
+
+      const { password: _, ...safeClient } = savedClient.toObject();
+
+      return res.status(200).json({
+        message:
+          "Client registered successfully, a verification mail has been sent to your email address",
+        newClient: safeClient,
+      });
     }
-
-    const newClient = new ClientModel({
-      email,
-      password: hashedPassword,
-      clientName,
-      clientAddress,
-      taxId,
-      servicesOffered,
-      otp,
-      otpExpiry: Date.now() + 3600000,
-    });
-
-    const token = jwt.sign({ user: newClient._id }, process.env.JWT_TOKEN, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 1 * 60 * 60 * 1000,
-    });
-
-    const savedClient = await newClient.save();
-
-    const subject = "Verification Mail";
-    const message = VerificationMail(clientName, otp);
-
-    await SendEmail(email, subject, message);
-
-    const { password: _, ...safeClient } = savedClient.toObject();
-
-    return res.status(200).json({
-      message:
-        "Client registered successfully, a verification mail has been sent to your email address",
-      newClient: safeClient,
-      token,
-    });
   } catch (error) {
     return res.status(500).json({ error_message: error.message });
   }
