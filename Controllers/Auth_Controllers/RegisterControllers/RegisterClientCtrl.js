@@ -56,10 +56,10 @@ const handleRegisterClient = async (req, res) => {
         await SendEmail(email, subject, message);
 
         const token = jwt.sign(
-          { user: existingClient._id },
+          { user: existingClient },
           process.env.JWT_TOKEN,
           {
-            expiresIn: "1h",
+            expiresIn: "7h",
           }
         );
 
@@ -67,7 +67,7 @@ const handleRegisterClient = async (req, res) => {
           httpOnly: true,
           secure: false,
           sameSite: "Strict",
-          maxAge: 1 * 60 * 60 * 1000,
+          maxAge: 7 * 60 * 60 * 1000,
         });
 
         return res.status(200).json({
@@ -88,15 +88,15 @@ const handleRegisterClient = async (req, res) => {
         otpExpiry: Date.now() + 3600000,
       });
 
-      const token = jwt.sign({ user: newClient._id }, process.env.JWT_TOKEN, {
-        expiresIn: "1h",
+      const token = jwt.sign({ user: newClient }, process.env.JWT_TOKEN, {
+        expiresIn: "7h",
       });
 
       res.cookie("token", token, {
         httpOnly: true,
         secure: false,
         sameSite: "Strict",
-        maxAge: 1 * 60 * 60 * 1000,
+        maxAge: 7 * 60 * 60 * 1000,
       });
 
       const savedClient = await newClient.save();
@@ -142,17 +142,6 @@ const handleVerifyClient = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    const token = jwt.sign({ user: user }, process.env.JWT_TOKEN, {
-      expiresIn: "7h",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 7 * 60 * 60 * 1000,
-    });
-
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpiry = undefined;
@@ -160,7 +149,7 @@ const handleVerifyClient = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Email verified successfully", user, token });
+      .json({ message: "Email verified successfully", user });
   } catch (error) {
     console.error("Error in handleVerifyClient:", error);
     return res.status(500).json({ error_message: error.message });
