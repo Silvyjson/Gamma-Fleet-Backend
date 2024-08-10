@@ -8,7 +8,7 @@ const VehicleSchema = new mongoose.Schema({
   productType: {
     type: String,
     required: true,
-    enum: ["Sedan", "SUV", "Truck", "Van", "Coupe", "Coach"],
+    enum: ["Sedan", "SUV", "Truck", "Van", "Coach"],
   },
   purchaseDate: { type: Date, required: true },
   permitType: {
