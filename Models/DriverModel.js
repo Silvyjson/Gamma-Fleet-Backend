@@ -12,6 +12,7 @@ const DriverSchema = new mongoose.Schema({
   assignedVehicle: {
     vehicle_id: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
     vehicleName: { type: String },
+    productType: { type: String },
   },
   client_id: { type: mongoose.Schema.Types.ObjectId, ref: "Clients" },
   budgets: [{ type: mongoose.Schema.Types.ObjectId, ref: "DriverBudget" }],

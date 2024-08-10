@@ -92,6 +92,7 @@ const handleAddVehicle = async (req, res) => {
         assignedVehicle: {
           vehicle_id: newVehicle._id,
           vehicleName: newVehicle.vehicleName,
+          productType: newVehicle.productType,
         },
       },
       { new: true }
