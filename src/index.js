@@ -20,6 +20,7 @@ app.use(
       "http://localhost:5173",
       "https://silvyjson.github.io",
       "https://gamma-fleet.web.app",
+      "https://gamma-fleet.onrender.com",
     ],
     credentials: true,
   })
