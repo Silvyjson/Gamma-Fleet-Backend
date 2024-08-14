@@ -2,7 +2,7 @@ const AdminModel = require("../../../Models/AdminModel");
 const ClientModel = require("../../../Models/ClientModel");
 const DriverModel = require("../../../Models/DriverModel");
 const SendEmail = require("../../../Utilities/SendEmail");
-const { InvitationMail } = require("../../../View/mailDetails");
+const { InvitationMail } = require("../../../Utilities/Mail");
 const bcrypt = require("bcrypt");
 
 const handleRegisterAdmin = async (req, res) => {

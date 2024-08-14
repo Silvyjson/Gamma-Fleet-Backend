@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>VerificationMail</title>
+    <style type="text/css">
+      .email-body {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .otp {
+        font-size: 50px;
+        font-weight: 700;
+      }
+      .logo {
+        margin: 20px 0;
+        width: 80px;
+      }
+    </style>
+  </head>
+  <body style="font-family: Arial, sans-serif; margin: 0; padding: 0">
+    <div class="email-body">
+      <h3>Welcome {{clientName}}</h3>
+      <p>Thank you for registering with us, your verification OTP is.</p>
+      <p class="otp">{{OTP}}</p>
+      <p>Do not disclose this to anyone.</p>
+      <p>If you did not register with us, please ignore this email.</p>
+      <p>Best regards</p>
+      <p>The Gamma Fleet Team</p>
+      <img src="{{logo_url}}" alt="gamma fleet logo" class="logo" />
+    </div>
+  </body>
+</html>
