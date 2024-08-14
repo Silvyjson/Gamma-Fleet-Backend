@@ -6,7 +6,7 @@ const logo_url =
   "https://res.cloudinary.com/do2ejotmr/image/upload/v1722242637/Screenshot_2024-07-29_094312_tyiuje.png";
 
 const loadTemplate = (templateName, variables) => {
-  const templatePath = path.join(__dirname, `Email/${templateName}.html`);
+  const templatePath = path.join(__dirname, "Email", `${templateName}.html`);
   const template = fs.readFileSync(templatePath, "utf-8");
   const compiledTemplate = handlebars.compile(template);
   return compiledTemplate(variables);
