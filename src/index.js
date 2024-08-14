@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser");
 
 const AuthRoutes = require("./Routes/AuthRoutes");
 const Routes = require("./Routes/OtherRoutes");
-const Documentation = require("./View/documentation");
 const deleteNonverifiedUsers = require("./Utilities/DeleteNonverifiedUsers");
 
 const app = express();
@@ -46,7 +45,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 app.get("/", (req, res) => {
-  res.send(Documentation);
+  res.send(`<h1>Welcome to the API Documentation</h1>`);
 });
 
 app.use("/api/", AuthRoutes);
