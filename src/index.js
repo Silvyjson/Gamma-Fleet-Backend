@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser");
 
 const AuthRoutes = require("./Routes/AuthRoutes");
 const Routes = require("./Routes/OtherRoutes");
-const Documentation = require("./View/documentation");
 const deleteNonverifiedUsers = require("./Utilities/DeleteNonverifiedUsers");
 
 const app = express();
@@ -20,7 +19,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://silvyjson.github.io",
-      "https://silvyjson.github.io/Gamma-Fleet/",
+      "https://gamma-fleet.web.app",
+      "https://gamma-fleet.onrender.com",
     ],
     credentials: true,
   })
@@ -46,7 +46,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 app.get("/", (req, res) => {
-  res.send(Documentation);
+  res.send(`<h1>Welcome to the API Documentation</h1>`);
 });
 
 app.use("/api/", AuthRoutes);

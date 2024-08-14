@@ -5,7 +5,7 @@ const SendEmail = require("../../../Utilities/SendEmail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const { VerificationMail } = require("../../../View/mailDetails");
+const { VerificationMail } = require("../../../Utilities/Mail");
 
 const handleRegisterClient = async (req, res) => {
   try {

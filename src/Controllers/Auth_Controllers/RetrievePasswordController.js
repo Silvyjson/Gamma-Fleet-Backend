@@ -4,7 +4,7 @@ const DriverModel = require("../../Models/DriverModel");
 const SendEmail = require("../../Utilities/SendEmail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { ResetPasswordMail } = require("../../View/mailDetails");
+const { ResetPasswordMail } = require("../../Utilities/Mail");
 
 const handleForgotPassword = async (req, res) => {
   try {
