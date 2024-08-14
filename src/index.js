@@ -19,8 +19,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://silvyjson.github.io",
-      "https://silvyjson.github.io/Gamma-Fleet/",
-      "https://gamma-fleet.web.app/",
+      "https://gamma-fleet.web.app",
     ],
     credentials: true,
   })
