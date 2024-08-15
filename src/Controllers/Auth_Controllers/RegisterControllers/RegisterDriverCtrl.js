@@ -92,7 +92,7 @@ const handleRegisterDriver = async (req, res) => {
     const savedClient = await client.save();
 
     const subject = "Driver Registration Invitation";
-    const inviteLink = `https://silvyjson.github.io/Gamma-Fleet/signIn-page`;
+    const inviteLink = `https://gamma-fleet.web.app/signIn-page`;
     const message = InvitationMail(
       fullName,
       client.clientName,
