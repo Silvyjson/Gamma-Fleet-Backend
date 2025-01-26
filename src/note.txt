@@ -1,0 +1,94 @@
+#!/bin/bash
+# Update system packages
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install necessary dependencies
+sudo apt install -y nginx git curl build-essential
+
+# Install Node.js (Latest LTS version)
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install PM2 (Process Manager for Node.js apps)
+sudo npm install -g pm2
+
+# Install Git (if not already installed)
+sudo apt install -y git
+
+# Clone your backend repository from Git
+cd /var/www/
+sudo git clone https://github.com/your-username/your-backend-repository.git myapp
+cd myapp
+
+# Create the .env file with environment variables
+sudo bash -c 'cat <<EOF > .env
+PORT=3000
+DB_HOST=localhost
+DB_PORT=27017
+DB_NAME=mydatabase
+SECRET_KEY=mysecretkey
+EOF'
+
+# Install your app dependencies (assuming you have package.json)
+sudo npm install
+
+# Start your backend app with PM2
+pm2 start server.js
+pm2 startup systemd
+pm2 save
+
+# Configure Nginx as a reverse proxy for your backend app
+sudo bash -c "cat > /etc/nginx/sites-available/myapp <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOF"
+
+#if you want to use https Configured with ssl certificates
+sudo bash -c "cat > /etc/nginx/sites-available/myapp <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://\$host\$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name myapp.com;
+
+    # SSL certificates (replace with actual paths)
+    ssl_certificate /etc/ssl/certs/your_domain_name.pem;
+    ssl_certificate_key /etc/ssl/private/your_domain_name.key;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOF"
+
+
+# Enable the Nginx configuration
+sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo systemctl restart nginx
+
+# Setup Complete
+echo "Setup Complete! Backend is running!"
