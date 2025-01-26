@@ -1,0 +1,46 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment when changes are pushed to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Install SSH client
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      # Add the private SSH key
+      - name: Add SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Add the EC2 instance to known hosts
+      - name: Add Host to Known Hosts
+        run: ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+
+      # Deploy application
+      - name: Deploy to AWS EC2
+        run: |
+          ssh ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
+          # Navigate to your deployment directory or clone the repo
+          cd /var/www/Gamma-Fleet-Backend || git clone https://github.com/Silvyjson/Gamma-Fleet-Backend.git /var/www/Gamma-Fleet-Backend && cd /var/www/Gamma-Fleet-Backend
+
+          # Pull the latest changes
+          git pull origin main
+
+          # Install dependencies and restart the app (Node.js example)
+          npm install
+          npm run build
+          pm2 restart all || pm2 start npm --name "Gamma-Fleet-Backend" -- start
+          EOF
